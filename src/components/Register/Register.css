@@ -1,0 +1,13 @@
+.google_button {
+  width: 275px;
+  height: 55px;
+  border-radius: 10px;
+  border: 1px solid #000;
+
+  background: #f7f8ff;
+}
+.google_button img {
+  width: 25px;
+
+  ;
+}
