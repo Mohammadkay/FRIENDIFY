@@ -3,11 +3,10 @@ import "./Register.css";
 import { useAuth } from "../../context/AuthCotext";
 import { Link } from "react-router-dom";
 
-export default function Register() {
+export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const nameref = useRef();
-  const { register, setError, signInWithGoogle, currentUser } = useAuth();
+  const { Login, setError, signInWithGoogle, currentUser } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,11 +15,7 @@ export default function Register() {
 
     setIsLoading(true);
     setError();
-    await register(
-      emailRef.current.value,
-      passwordRef.current.value,
-      nameref.current.value
-    );
+    await Login(emailRef.current.value, passwordRef.current.value);
     setIsLoading(false);
   }
 
@@ -41,9 +36,7 @@ export default function Register() {
           <img src="./Images/hero.png" alt="welcome " />
         </section>
         <section className="Register_form">
-          <h2 style={{ alignSelf: "center", fontWeight: "600" }}>
-            Create Account
-          </h2>
+          <h2 style={{ alignSelf: "center", fontWeight: "600" }}>Sign In</h2>
           <div className="Google_section">
             <button onClick={handleSignInWithGoogle} className="google_button">
               <img src="./Images/Google.png" alt="gmail icon" /> Sign up with
@@ -73,26 +66,17 @@ export default function Register() {
                 required
               />
             </div>
-            <div>
-              <label htmlFor="Uname"> User Name </label>
-              <input
-                type="text"
-                id="Uname"
-                className="form-control"
-                ref={nameref}
-                required
-              />
-            </div>
+            <div></div>
             <button
               disabled={isLoading}
               type="submit"
               className="registerbutton"
             >
-              Create Account
+              Sign In
             </button>
           </form>
-          <p >
-            <Link to="/login">Already have an account? Log in</Link>
+          <p>
+            <Link to="/">Dont have an account? Create Account</Link>
           </p>
         </section>
       </section>

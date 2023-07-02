@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { auth,  db } from "../Firebase_config";
+import { auth, db } from "../Firebase_config";
 import { useNavigate } from "react-router-dom";
 import { getDocs, collection, setDoc, doc, addDoc } from "firebase/firestore";
+import Swal from "sweetalert2";
 
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 /****** Use Context  *****************/
@@ -22,6 +23,7 @@ export function AuthProvider(props) {
   /***********to navigate between pages  */
   const navigate = useNavigate();
 
+  const [error, setError] = useState();
   /****************************** */
   useEffect(() => {
     /*********** SET CURRENT USER TO user who login or register  ***** */
@@ -90,11 +92,56 @@ export function AuthProvider(props) {
         photoURL: user.photoURL,
         phoneNumber: user.phoneNumber
       });
+      await navigate("/Home");
     } catch (err) {
       console.log(err);
+      if (err.code === "auth/invalid-email") {
+        setError("InvalidEmail");
+        console.log(err.message);
+      } else if (err.code === "auth/email-already-in-use") {
+        setError("EmailAlreadyInUse");
+        console.log(err.message);
+      } else {
+        setError(err.message);
+        console.log(err.message);
+      }
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error
+      });
     }
   };
+
   /****************************** */
+  const Login = async (email, password) => {
+    try {
+      const userCredential = await auth.signInWithEmailAndPassword(
+        email,
+        password
+      );
+      await navigate("/Home");
+    } catch (err) {
+      let errorMessage = "";
+
+      if (err.code === "auth/invalid-email") {
+        errorMessage = "Invalid email";
+      } else {
+        errorMessage = "Email or password is not correct";
+      }
+
+      setError(errorMessage);
+      console.log(errorMessage);
+
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: errorMessage
+      });
+    }
+  };
+
+  /******************* */
   const provider = new GoogleAuthProvider();
 
   const signInWithGoogle = async () => {
@@ -116,7 +163,7 @@ export function AuthProvider(props) {
       });
 
       // Navigate to the "Home" page after user data is stored
-      navigate("/Home");
+      await navigate("/Home");
     } catch (error) {
       console.log(error.message);
     }
@@ -132,11 +179,14 @@ export function AuthProvider(props) {
   };
   const value = {
     register,
-    logout,
+    Login,
     signInWithGoogle,
+    logout,
+    addComment,
+    setError,
     currentUser,
     userPost,
-    addComment,
+    error,
     Posts
   };
   return (
