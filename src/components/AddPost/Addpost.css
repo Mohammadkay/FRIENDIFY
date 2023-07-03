@@ -1,0 +1,38 @@
+.addPost {
+  display: flex;
+  gap: 15px;
+  background: #d5dbf1;
+
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 15px;
+  flex-wrap: wrap;
+}
+.addPostphoto {
+  border-radius: 50%;
+  width: 60px;
+  align-self: flex-start;
+}
+
+textarea {
+  width: 500px;
+  height: 45px;
+  border-radius: 32px;
+  resize: none;
+  padding: 15px;
+  outline: none;
+  font-size: 16px;
+  align-self: end;
+}
+textarea::-webkit-scrollbar {
+  display: none;
+}
+.addPost button {
+  align-self: end;
+}
+.addPost div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

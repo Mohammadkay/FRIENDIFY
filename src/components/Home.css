@@ -1,0 +1,30 @@
+.HomeContainer {
+  width: 95%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.postsContainers{
+    width: 70%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+.HomeContainer button {
+  background-color: #b9c7e7;
+  width: 100px;
+  height: 35px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  
+}
+.homeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+}

@@ -1,7 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { auth, db } from "../Firebase_config";
 import { useNavigate } from "react-router-dom";
-import { getDocs, collection, setDoc, doc, addDoc } from "firebase/firestore";
+import {
+  getDocs,
+  collection,
+  setDoc,
+  doc,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  orderBy,
+  query
+} from "firebase/firestore";
 import Swal from "sweetalert2";
 
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -28,14 +38,7 @@ export function AuthProvider(props) {
 
   const [error, setError] = useState();
   /****************************** */
-  useEffect(() => {
-    /*********** SET CURRENT USER TO user who login or register  ***** */
-    setIsLoading(false);
-    const unSubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
-    });
-    return unSubscribe;
-  }, []);
+
   /***************************************************** */
   const userscollection = collection(db, "users");
   const postCollection = collection(db, "Posts");
@@ -43,10 +46,15 @@ export function AuthProvider(props) {
 
   /******************************** */
   const getPosts = async () => {
-    const data = await getDocs(postCollection);
-
-    setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    const Q = query(postCollection, orderBy("postDate", "desc"));
+    const querySnapshot = await getDocs(Q);
+    const posts = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id
+    }));
+    setPosts(posts);
   };
+
   /*************GET USERS *********** */
   const user = async () => {
     const data = await getDocs(userscollection);
@@ -146,6 +154,7 @@ export function AuthProvider(props) {
 
       // Navigate to the "Home" page after user data is stored
       await navigate("/Home");
+      window.location.reload();
     } catch (error) {
       console.log(error.message);
     }
@@ -162,11 +171,18 @@ export function AuthProvider(props) {
   /**********************Add Post  **********************/
   const addPost = async (userid, descrption) => {
     try {
-      await addDoc(postCollection, {
+      const docRef = await addDoc(postCollection, {
         descption: descrption,
         userID: userid,
-        postDate: new Date()
+        postDate: new Date().toISOString()
       });
+      const newPost = {
+        id: docRef.id,
+        descption: descrption,
+        userID: userid,
+        postDate: new Date().toISOString()
+      };
+      setPosts((prevPosts) => [newPost, ...prevPosts]);
     } catch (err) {
       console.log(err);
 
@@ -177,27 +193,81 @@ export function AuthProvider(props) {
       });
     }
   };
-  /******************* ADD COMMENT ************************** */
-
-  const addComment = async (userid, postid, descrption) => {
+  /********************* Delete Post ****************/
+  const Delete = async (PostId) => {
     try {
-      await addDoc(comentCollection, {
-        userId: userid,
-        PostId: postid,
-        description: descrption,
-        Date: new Date()
+      const delpost = doc(db, "Posts", PostId);
+      await deleteDoc(delpost);
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== PostId));
+
+      const commentQuerySnapshot = await getDocs(comentCollection);
+      commentQuerySnapshot.docs.map((ele) => {
+        const comment = ele.data();
+        if (comment.PostId === PostId) {
+          const delcomment = doc(db, "Comments", ele.id);
+          deleteDoc(delcomment);
+        }
       });
     } catch (err) {
       console.log(err);
     }
   };
 
-  /************************get all comment */
+  /******************Edit post **********************/
+  const EditPost = async (PostId, description) => {
+    try {
+      const editPost = doc(db, "Posts", PostId);
+      await updateDoc(editPost, {
+        descption: description
+      });
+
+      // Update the Posts state with the edited post
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === PostId ? { ...post, descption: description } : post
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  /******************* ADD COMMENT ************************** */
+
+  const addComment = async (userid, postid, descrption) => {
+    try {
+      const docRef = await addDoc(comentCollection, {
+        userId: userid,
+        PostId: postid,
+        description: descrption,
+        //toISOString()==> save date as string in database
+        Date: new Date().toISOString()
+      });
+      const newComment = {
+        id: docRef.id,
+        userId: userid,
+        PostId: postid,
+        description: descrption,
+        Date: new Date().toISOString()
+      };
+      setComments((prevComment) => [...prevComment, newComment]);
+    } catch (err) {
+      console.log(err.code);
+    }
+  };
+
+  /******************  get all comment **************/
   const getComments = async () => {
     let data = await getDocs(comentCollection);
     await setComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
+
   useEffect(() => {
+    setIsLoading(false);
+    const unSubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+    unSubscribe();
     user();
     getPosts();
     getComments();
@@ -210,6 +280,8 @@ export function AuthProvider(props) {
     addComment,
     setError,
     addPost,
+    Delete,
+    EditPost,
     comments,
     currentUser,
     Users,
