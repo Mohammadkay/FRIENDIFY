@@ -19,7 +19,10 @@ export function AuthProvider(props) {
   /******************** to get the ALL Post   */
   const [Posts, setPosts] = useState([]);
   /**************to get the user picture and name for who create the post  */
-  const [userPost, setUserPost] = useState([]);
+  const [Users, setUsers] = useState([]);
+
+  /***************Get comments */
+  const [comments, setComments] = useState([]);
   /***********to navigate between pages  */
   const navigate = useNavigate();
 
@@ -44,29 +47,11 @@ export function AuthProvider(props) {
 
     setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
-  /************************ */
+  /*************GET USERS *********** */
   const user = async () => {
     const data = await getDocs(userscollection);
 
-    setUserPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-  };
-  useEffect(() => {
-    user();
-    getPosts();
-  }, []);
-
-  /********************************************* */
-
-  const addComment = async (userid, postid, descrption) => {
-    try {
-      await addDoc(comentCollection, {
-        userId: userid,
-        PostId: postid,
-        description: descrption
-      });
-    } catch (err) {
-      console.log(err);
-    }
+    setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
 
   /************************************************* */
@@ -116,10 +101,7 @@ export function AuthProvider(props) {
   /****************************** */
   const Login = async (email, password) => {
     try {
-      const userCredential = await auth.signInWithEmailAndPassword(
-        email,
-        password
-      );
+      await auth.signInWithEmailAndPassword(email, password);
       await navigate("/Home");
     } catch (err) {
       let errorMessage = "";
@@ -177,6 +159,49 @@ export function AuthProvider(props) {
       console.log(err);
     }
   };
+  /**********************Add Post  **********************/
+  const addPost = async (userid, descrption) => {
+    try {
+      await addDoc(postCollection, {
+        descption: descrption,
+        userID: userid,
+        postDate: new Date()
+      });
+    } catch (err) {
+      console.log(err);
+
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something going wrong try again"
+      });
+    }
+  };
+  /******************* ADD COMMENT ************************** */
+
+  const addComment = async (userid, postid, descrption) => {
+    try {
+      await addDoc(comentCollection, {
+        userId: userid,
+        PostId: postid,
+        description: descrption,
+        Date: new Date()
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  /************************get all comment */
+  const getComments = async () => {
+    let data = await getDocs(comentCollection);
+    await setComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  };
+  useEffect(() => {
+    user();
+    getPosts();
+    getComments();
+  }, []);
   const value = {
     register,
     Login,
@@ -184,8 +209,10 @@ export function AuthProvider(props) {
     logout,
     addComment,
     setError,
+    addPost,
+    comments,
     currentUser,
-    userPost,
+    Users,
     error,
     Posts
   };
