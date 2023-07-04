@@ -7,7 +7,6 @@ export default function GetPosts() {
   const [isLoading, setIsLoading] = useState(false);
   const [editPostId, setEditPostId] = useState(null); // Track the post ID being edited
   const [postEditValue, setPostEditValue] = useState("");
-  const [usercoment, setUsercoments] = useState("");
   const { currentUser, Posts, Users, addComment, Delete, comments, EditPost } =
     useAuth();
   const commentRefs = useRef([]);
@@ -79,7 +78,7 @@ export default function GetPosts() {
         const userComment = Users.find((user) => user.id === e.userId);
 
         return (
-          <div key={e.id}>
+          <div key={e.id} style={{ margin: "15px" }}>
             <div className="CommentUser">
               <img
                 src={
@@ -120,8 +119,6 @@ export default function GetPosts() {
           <div className="postContat">
             <div className="postHader">
               <div className="img_name">
-                {console.log(filteredPost)}
-                {console.log(ele)}
                 <img
                   src={
                     filteredPost.photoURL != null
@@ -153,7 +150,9 @@ export default function GetPosts() {
               )}
             </div>
             {!isCurrentlyEditing ? ( // Render post description if not currently editing
-              <p>{ele.descption}</p>
+              <p style={{ width: "70%", margin: "9px auto" }}>
+                {ele.descption}
+              </p>
             ) : (
               // Render input field for editing if currently editing
               <div>

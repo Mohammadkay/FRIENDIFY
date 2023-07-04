@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import "./Register.css";
 import { useAuth } from "../../context/AuthCotext";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ export default function Register() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const nameref = useRef();
-  const { register, setError, signInWithGoogle, currentUser } = useAuth();
+  const { register, setError, signInWithGoogle } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -91,7 +91,7 @@ export default function Register() {
               Create Account
             </button>
           </form>
-          <p >
+          <p>
             <Link to="/login">Already have an account? Log in</Link>
           </p>
         </section>

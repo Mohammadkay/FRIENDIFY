@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {  useRef, useState } from "react";
 import "./Register.css";
 import { useAuth } from "../../context/AuthCotext";
 import { Link } from "react-router-dom";
@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { Login, setError, signInWithGoogle, currentUser } = useAuth();
+  const { Login, setError, signInWithGoogle } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
 

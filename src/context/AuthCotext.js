@@ -85,6 +85,8 @@ export function AuthProvider(props) {
         photoURL: user.photoURL,
         phoneNumber: user.phoneNumber
       });
+      setCurrentUser(user);
+      console.log(user);
       await navigate("/Home");
     } catch (err) {
       console.log(err);
@@ -110,6 +112,7 @@ export function AuthProvider(props) {
   const Login = async (email, password) => {
     try {
       await auth.signInWithEmailAndPassword(email, password);
+      setCurrentUser(user);
       await navigate("/Home");
     } catch (err) {
       let errorMessage = "";
@@ -141,6 +144,7 @@ export function AuthProvider(props) {
 
       // Get user data
       const user = userCredential.user;
+      setCurrentUser(user);
 
       // Store user data in Firestore
       await setDoc(doc(db, "users", user.uid), {
@@ -154,7 +158,6 @@ export function AuthProvider(props) {
 
       // Navigate to the "Home" page after user data is stored
       await navigate("/Home");
-      window.location.reload();
     } catch (error) {
       console.log(error.message);
     }
@@ -263,10 +266,10 @@ export function AuthProvider(props) {
   };
 
   useEffect(() => {
-    setIsLoading(false);
     const unSubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
     });
+    setIsLoading(false);
     unSubscribe();
     user();
     getPosts();
