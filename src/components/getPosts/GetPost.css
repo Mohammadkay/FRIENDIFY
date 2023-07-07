@@ -35,13 +35,17 @@
 .addcomments {
   padding-top: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-content: center;
+  flex-wrap: wrap;
 }
 .addcomments input {
   border: none;
-  width: 77%;
+  padding-left: 15px;
   border-radius: 15px;
   outline: none;
+  width: 51%;
+  height: 34px;
 }
 .CommentUser {
   display: flex;
@@ -52,7 +56,27 @@
   width: 50px;
   border-radius: 50%;
 }
- .comment {
+.comment {
   width: 73%;
   margin: auto;
+}
+.addcomments img {
+  width: 50px;
+  border-radius: 50%;
+}
+.addcomments div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.EditsPost {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.EditsPost input {
+  width: 70%;
+  height: 37px;
+  border-radius: 15px;
+  padding-left: 8px;
 }

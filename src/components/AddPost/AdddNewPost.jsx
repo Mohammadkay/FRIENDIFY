@@ -31,7 +31,7 @@ export default function AdddPost() {
         <p>{currentUser && currentUser.displayName}</p>
       </div>
       <textarea type="text" ref={descriptionRef}></textarea>
-      <button onClick={handleAddPost}>addPost</button>
+      <button onClick={handleAddPost}>Add Post</button>
     </div>
   );
 }

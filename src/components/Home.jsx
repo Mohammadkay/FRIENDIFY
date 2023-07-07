@@ -10,7 +10,12 @@ export default function Home() {
       <div className="homeHeader">
         <img className="Logo" src="./Images/Logo.png" alt="logo" />
 
-        <button onClick={logout}>Logout</button>
+     
+        <i
+          onClick={logout}
+          className="fa-solid fa-right-from-bracket fa-2xl Logout"
+          style={{ color: "#8077f8" }}
+        ></i>
       </div>
       <div className="postsContainers">
         <AdddPost />

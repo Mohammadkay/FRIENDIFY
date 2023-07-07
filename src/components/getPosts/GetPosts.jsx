@@ -15,7 +15,7 @@ export default function GetPosts() {
   const handleEdit = (id) => {
     try {
       const post = Posts.find((ele) => ele.id === id);
-      setPostEditValue(post.descption);
+      setPostEditValue(post.description);
       setEditPostId(id);
     } catch (err) {
       console.log(err);
@@ -112,26 +112,23 @@ export default function GetPosts() {
     return Posts.map((ele, index) => {
       // Find the user who posted this post
       const filteredPost = Users.find((e) => e.uid === ele.userID);
-      const isCurrentlyEditing = editPostId === ele.id; // Check if the post is being currently edited
+      const isCurrentlyEditing = editPostId === ele.id;
+
+      // Check if the post is being currently edited
 
       return (
         <div key={ele.id} className="PostContantContainer">
           <div className="postContat">
             <div className="postHader">
               <div className="img_name">
-                <img
-                  src={
-                    filteredPost.photoURL != null
-                      ? filteredPost.photoURL
-                      : "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg"
-                  }
-                  alt={filteredPost.name}
-                />
-                <p>
-                  {filteredPost.name}
-                  <br />
+                {filteredPost && filteredPost.photoURL && filteredPost.name && (
+                  <img src={filteredPost.photoURL} alt={filteredPost.name} />
+                )}
 
-                  {new Date(ele.postDate).toLocaleString()}
+                <p>
+                  {filteredPost && filteredPost.name ? filteredPost.name : ""}
+                  <br />
+                  {filteredPost && new Date(ele.postDate).toLocaleString()}
                 </p>
               </div>
               {ele.userID === currentUser.uid && (
@@ -151,11 +148,11 @@ export default function GetPosts() {
             </div>
             {!isCurrentlyEditing ? ( // Render post description if not currently editing
               <p style={{ width: "70%", margin: "9px auto" }}>
-                {ele.descption}
+                {console.log(ele)} {ele.descption}
               </p>
             ) : (
               // Render input field for editing if currently editing
-              <div>
+              <div className="EditsPost">
                 <input
                   type="text"
                   value={postEditValue}
@@ -170,6 +167,18 @@ export default function GetPosts() {
           <div>{getComments(ele.id)}</div>
           {/* // Render comments for the post */}
           <div className="addcomments">
+            <div>
+              {console.log(currentUser)}
+              <img
+                src={
+                  currentUser && currentUser.photoURL
+                    ? currentUser.photoURL
+                    : "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg"
+                }
+                alt="User"
+              />
+              <p>{currentUser.displayName}</p>
+            </div>
             <input
               type="text"
               ref={(el) => (commentRefs.current[index] = el)}

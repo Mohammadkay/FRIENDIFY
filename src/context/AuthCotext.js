@@ -82,7 +82,8 @@ export function AuthProvider(props) {
         email: user.email,
         name: user.displayName,
         uid: user.uid,
-        photoURL: user.photoURL,
+        photoURL:
+          "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg",
         phoneNumber: user.phoneNumber
       });
       setCurrentUser(user);
@@ -195,6 +196,7 @@ export function AuthProvider(props) {
         text: "Something going wrong try again"
       });
     }
+    await getPosts();
   };
   /********************* Delete Post ****************/
   const Delete = async (PostId) => {
@@ -214,6 +216,7 @@ export function AuthProvider(props) {
     } catch (err) {
       console.log(err);
     }
+    getPosts();
   };
 
   /******************Edit post **********************/
@@ -233,6 +236,7 @@ export function AuthProvider(props) {
     } catch (err) {
       console.log(err);
     }
+    getPosts();
   };
 
   /******************* ADD COMMENT ************************** */
@@ -257,12 +261,14 @@ export function AuthProvider(props) {
     } catch (err) {
       console.log(err.code);
     }
+    getPosts();
   };
 
   /******************  get all comment **************/
   const getComments = async () => {
     let data = await getDocs(comentCollection);
     await setComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    getPosts();
   };
 
   useEffect(() => {
@@ -274,7 +280,7 @@ export function AuthProvider(props) {
     user();
     getPosts();
     getComments();
-  }, []);
+  }, [currentUser]);
   const value = {
     register,
     Login,
